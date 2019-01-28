@@ -17,6 +17,8 @@
  *
  */
 
+import {GenericMessage, Text} from '@wireapp/protocol-messaging';
+
 import Conversation from 'src/script/entity/Conversation';
 
 describe('ConversationRepository', () => {
@@ -53,8 +55,6 @@ describe('ConversationRepository', () => {
 
     return conversation;
   };
-
-  beforeAll(() => z.util.protobuf.loadProtos('ext/js/@wireapp/protocol-messaging/proto/messages.proto'));
 
   beforeEach(() => {
     server = sinon.fakeServer.create();
@@ -959,11 +959,14 @@ describe('ConversationRepository', () => {
       return TestFactory.conversation_repository
         .save_conversation(largeConversationEntity)
         .then(() => {
-          const genericMessage = new z.proto.GenericMessage(z.util.createRandomUuid());
-          const text = new z.proto.Text(
-            'massive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external messagemassive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external messagemassive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external messagemassive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external message'
-          );
-          genericMessage.set(z.cryptography.GENERIC_MESSAGE_TYPE.TEXT, text);
+          const text = new Text({
+            content:
+              'massive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external messagemassive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external messagemassive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external messagemassive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external message massive external message',
+          });
+          const genericMessage = new GenericMessage({
+            [z.cryptography.GENERIC_MESSAGE_TYPE.TEXT]: text,
+            messageId: z.util.createRandomUuid(),
+          });
 
           const eventInfoEntity = new z.conversation.EventInfoEntity(genericMessage, largeConversationEntity.id);
           return TestFactory.conversation_repository._shouldSendAsExternal(eventInfoEntity);
@@ -980,8 +983,10 @@ describe('ConversationRepository', () => {
       return TestFactory.conversation_repository
         .save_conversation(smallConversationEntity)
         .then(() => {
-          const genericMessage = new z.proto.GenericMessage(z.util.createRandomUuid());
-          genericMessage.set(z.cryptography.GENERIC_MESSAGE_TYPE.TEXT, new z.proto.Text('Test'));
+          const genericMessage = new GenericMessage({
+            [z.cryptography.GENERIC_MESSAGE_TYPE.TEXT]: new Text({content: 'Test'}),
+            messageId: z.util.createRandomUuid(),
+          });
 
           const eventInfoEntity = new z.conversation.EventInfoEntity(genericMessage, smallConversationEntity.id);
           return TestFactory.conversation_repository._shouldSendAsExternal(eventInfoEntity);
@@ -1011,12 +1016,12 @@ describe('ConversationRepository', () => {
       spyOn(conversationRepository.conversation_service, 'post_encrypted_message').and.returnValue(Promise.resolve({}));
       spyOn(conversationRepository.conversationMapper, 'mapConversations').and.returnValue(conversationPromise);
       spyOn(conversationRepository.cryptography_repository, 'encryptGenericMessage').and.callFake(
-        (conversationId, genericMessage, payload, preconditionOption) => {
+        (conversationId, genericMessage) => {
           const {content, ephemeral} = genericMessage;
 
           expect(content).toBe(z.cryptography.GENERIC_MESSAGE_TYPE.EPHEMERAL);
           expect(ephemeral.content).toBe(z.cryptography.GENERIC_MESSAGE_TYPE.TEXT);
-          expect(ephemeral.expire_after_millis.toString()).toBe(expectedValues.shift());
+          expect(ephemeral.expireAfterMillis.toString()).toBe(expectedValues.shift());
           return Promise.resolve({
             recipients: {},
           });
