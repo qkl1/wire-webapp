@@ -3995,7 +3995,7 @@ z.conversation.ConversationRepository = class ConversationRepository {
 
       case 'text': {
         const protoText = genericMessage.text;
-        const length = protoText[z.cryptography.PROTO_MESSAGE_TYPE.LINK_PREVIEWS];
+        const length = protoText[z.cryptography.PROTO_MESSAGE_TYPE.LINK_PREVIEWS].length;
         if (!length) {
           actionType = 'text';
           numberOfMentions = protoText.mentions.length;
