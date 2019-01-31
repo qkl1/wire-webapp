@@ -52,7 +52,7 @@ export default class ReceiptsMiddleware {
         return this.conversationRepository.get_conversation_by_id(event.conversation).then(conversation => {
           if (conversation.isGroup()) {
             const expectsReadConfirmation = conversation.receiptMode() === ReceiptMode.DELIVERY_AND_READ;
-            event.data.expectsReadConfirmation = !!expectsReadConfirmation;
+            event.data.expects_read_confirmation = !!expectsReadConfirmation;
           }
           return event;
         });
