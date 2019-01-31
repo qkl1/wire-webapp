@@ -17,7 +17,7 @@
  *
  */
 
-import {Availability, Confirmation, GenericMessage} from '@wireapp/protocol-messaging';
+import {Availability, Confirmation, GenericMessage, LinkPreview, Mention, Quote} from '@wireapp/protocol-messaging';
 
 export default class CryptographyMapper {
   static get CONFIG() {
@@ -433,9 +433,11 @@ export default class CryptographyMapper {
     return {
       data: {
         content: `${text.content}`,
-        mentions: protoMentions.map(protoMention => protoMention.encode64()),
-        previews: protoLinkPreviews.map(protoLinkPreview => protoLinkPreview.encode64()),
-        quote: protoQuote && protoQuote.encode64(),
+        mentions: protoMentions.map(protoMention => z.util.arrayToBase64(Mention.encode(protoMention).finish())),
+        previews: protoLinkPreviews.map(protoLinkPreview =>
+          z.util.arrayToBase64(LinkPreview.encode(protoLinkPreview).finish())
+        ),
+        quote: protoQuote && z.util.arrayToBase64(Quote.encode(protoQuote).finish()),
       },
       type: z.event.Client.CONVERSATION.MESSAGE_ADD,
     };
