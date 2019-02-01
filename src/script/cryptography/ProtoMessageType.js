@@ -21,7 +21,7 @@ window.z = window.z || {};
 window.z.cryptography = z.cryptography || {};
 
 z.cryptography.PROTO_MESSAGE_TYPE = {
-  ASSET_NOT_UPLOADED: 'not_uploaded',
+  ASSET_NOT_UPLOADED: 'notUploaded',
   ASSET_ORIGINAL: 'original',
   ASSET_PREVIEW: 'preview',
   ASSET_UPLOADED: 'uploaded',
