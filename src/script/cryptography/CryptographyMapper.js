@@ -174,8 +174,8 @@ export default class CryptographyMapper {
 
       data = Object.assign(data, {
         preview_key: remote.assetId,
-        preview_otr_key: new Uint8Array(remote.otrKey.buffer),
-        preview_sha256: new Uint8Array(remote.sha256.buffer),
+        preview_otr_key: remote.otrKey,
+        preview_sha256: remote.sha256,
         preview_token: remote.assetToken,
       });
     }
@@ -188,14 +188,12 @@ export default class CryptographyMapper {
     if (uploaded !== null) {
       data = Object.assign(data, {
         key: uploaded.assetId,
-        otr_key: new Uint8Array(uploaded.otrKey.buffer),
-        sha256: new Uint8Array(uploaded.sha256.buffer),
+        otr_key: uploaded.otrKey,
+        sha256: uploaded.sha256,
         status: z.assets.AssetTransferState.UPLOADED,
         token: uploaded.assetToken,
       });
-    }
-
-    if (notUploaded !== null) {
+    } else {
       data = Object.assign(data, {
         reason: notUploaded,
         status: z.assets.AssetTransferState.UPLOAD_FAILED,

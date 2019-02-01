@@ -2149,8 +2149,10 @@ z.conversation.ConversationRepository = class ConversationRepository {
       return Promise.reject(new z.error.ConversationError(z.error.ConversationError.TYPE.NO_MESSAGE_CHANGES));
     }
 
+    const messageId = z.util.createRandomUuid();
+
     const protoText = this._createTextProto(
-      genericMessage.messageId,
+      messageId,
       textMessage,
       mentionEntities,
       undefined,
@@ -2160,7 +2162,7 @@ z.conversation.ConversationRepository = class ConversationRepository {
     const protoMessageEdit = new MessageEdit({replacingMessageId: originalMessageEntity.id, text: protoText});
     const genericMessage = new GenericMessage({
       [z.cryptography.GENERIC_MESSAGE_TYPE.EDITED]: protoMessageEdit,
-      messageId: z.util.createRandomUuid(),
+      messageId,
     });
 
     return this._send_and_inject_generic_message(conversationEntity, genericMessage, false)
@@ -2361,7 +2363,7 @@ z.conversation.ConversationRepository = class ConversationRepository {
 
     genericMessage = new GenericMessage({
       [z.cryptography.GENERIC_MESSAGE_TYPE.EPHEMERAL]: protoEphemeral,
-      messageId: genericMessage.messageId,
+      messageId: z.util.createRandomUuid(),
     });
 
     return genericMessage;
