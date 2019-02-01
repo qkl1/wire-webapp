@@ -704,11 +704,7 @@ export default class EventMapper {
         const {assetId: assetKey, assetToken} = previewImage.uploaded;
 
         if (assetKey) {
-          let {otrKey, sha256} = previewImage.uploaded;
-
-          otrKey = new Uint8Array(otrKey.buffer);
-          sha256 = new Uint8Array(sha256.buffer);
-
+          const {otrKey, sha256} = previewImage.uploaded;
           linkPreviewEntity.image_resource(z.assets.AssetRemoteData.v3(assetKey, otrKey, sha256, assetToken, true));
         }
       }
