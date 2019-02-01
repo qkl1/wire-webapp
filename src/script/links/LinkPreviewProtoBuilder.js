@@ -59,7 +59,7 @@ z.links.LinkPreviewProtoBuilder = {
           const protoTweet = new Tweet({author, username});
 
           protoLinkPreview[z.cryptography.PROTO_MESSAGE_TYPE.TWEET] = protoTweet;
-          protoLinkPreview[z.cryptography.PROTO_MESSAGE_TYPE.LINK_PREVIEW_TITLE] = truncatedTitle;
+          protoLinkPreview[z.cryptography.PROTO_MESSAGE_TYPE.LINK_PREVIEW_TITLE] = truncatedDescription;
         }
 
         return protoLinkPreview;
